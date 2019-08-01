@@ -1,7 +1,7 @@
 #ifndef DEFINITIONS_H
 #define DEFINITIONS_H
 
-typedef int index;
+typedef int idx;
 typedef unsigned int uint;
 
 #define ErrCode -1

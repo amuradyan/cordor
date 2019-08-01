@@ -46,7 +46,7 @@ private:
 	void DFSUtil(int v, bool visited[]);  // A function used by DFS
 private:
 	std::vector<Node> m_vertices;
-	std::vector<std::list<index>> m_adjacencyList;
+	std::vector<std::list<idx>> m_adjacencyList;
 	std::ofstream outStream;
 	std::ifstream guids;
 };
