@@ -1,10 +1,10 @@
-#include "Exception.h "
+#include "Exception.h"
 #include "Graph.h"
 
+#include <ctime>
 #include <fstream>
 #include <cstdlib>
 #include <iostream>
-#include <chrono>
 
 void Generator::generateGraphFromInput(std::string filename, Graph & graph) {
 	std::ifstream inputFile(inputFileName, std::ifstream::in);
@@ -47,6 +47,6 @@ void Graph::generateJsonObject(std::string guid, std::string miniBusNum, long do
 	outStream << "  \"MiniBus\": \"" << miniBusNum << "\"," << std::endl;
 	outStream << "  \"Long\": " << std::to_string(Long) << "," << std::endl;
 	outStream << "  \"Lat\": " << std::to_string(Lat) << "," << std::endl;
-	outStream << "  \"Time\": " << GetTickCount() << std::endl;
+	outStream << "  \"Time\": " << std::time(0) << std::endl;
 	outStream << " }," << std::endl;
 }

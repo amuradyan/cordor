@@ -3,6 +3,7 @@
 #include <iostream>
 #include <fstream>
 #include <list>
+#include <algorithm>
 
 Graph::Graph():
 	outStream(outputFileName, std::ofstream::out),
