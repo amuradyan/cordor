@@ -3,6 +3,7 @@
 #include <iostream>
 #include <fstream>
 #include <list>
+#include <algorithm>
 
 Graph::Graph():
 	outStream(outputFileName, std::ofstream::out),
@@ -133,7 +134,7 @@ void Graph::generateObjects()
 		
 		 // generate minibuse number
 		std::string minibusNum = minibuses[rand() % minibuses.size()];
-		// generate count of max vertexeces to go
+		// generate count of max vertices to go
 		int roadMaxLength = rand() % 10 + 1;
 		int j_adj = 0;
 		if (m_adjacencyList[index].size() != 0) {
