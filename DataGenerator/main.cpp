@@ -9,8 +9,10 @@ int main() {
 		Graph YerevanMap;
 		// reads input from file and generates graph of that.
 		Generator::generateGraphFromInput(inputFileName, YerevanMap);
+		Generator::reGenerateGraph(YerevanMap);
+		std::vector<Moving_obj> objects = Generator::GenerateMovingObjects(5);
 		//YerevanMap.printGraph();
-		YerevanMap.generateObjects();
+		YerevanMap.simulate(objects);
 	}
 	catch (ExceptionError exc) {
 		std::cout << "EXCEPTION: " << exc.message() << std::endl;

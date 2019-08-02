@@ -10,8 +10,8 @@ typedef unsigned int uint;
 #define outputFileName "res/outputData.json"
 #define guidFileName "res/GUIDs"
 #define IdsMaxCount 50
+#define routeLength 0.0005  // meters
+#define midSpeed    20      // m/s
 
-//how many parts will be cuted roads
-#define cutsCount 10
 
 #endif

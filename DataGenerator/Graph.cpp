@@ -5,6 +5,8 @@
 #include <list>
 #include <algorithm>
 
+extern std::vector<std::list<Route>> Routes;
+
 Graph::Graph():
 	outStream(outputFileName, std::ofstream::out),
 	guids(guidFileName, std::ifstream::in)
@@ -15,12 +17,10 @@ Graph::Graph():
 	if (!guids.is_open()) {
 		throw ExceptionError("Can not open GUIDs file");
 	}
-	outStream << "[" << std::endl;
 }
 
 Graph::~Graph()
 {
-	outStream << "]" << std::endl;
 	outStream.close();
 	guids.close();
 }
@@ -99,94 +99,171 @@ void Graph::DFSUtil(int v, bool visited[]) {
 	}*/
 }
 
-
-const std::vector<std::string> minibuses = {
-	"8",
-	"26",
-	"63",
-	"5",
-	"52A",
-	"18"
-};
-
+long double dist_eee(Node first, Node second) {
+	return (pow(pow(second.y - first.y, 2) + pow(second.y - first.y, 2) , 0.5));
+}
 
 // Need output genrerator with mini generators
-void Graph::generateObjects()
+void Graph::simulate(std::vector<Moving_obj> Mov_Objs)
 {
 	int i = 0;
 	int index = 0;
 	int adjIndex = 0;
 	std::string guide = "";
 	Node currentNode;
-	std::vector<std::pair<long double, long double>> pointsOnRoad;
-	while (i != IdsMaxCount) {
-		index = rand() % m_vertices.size();
-		currentNode = m_vertices[index];
-		//Generate Guid
-		std::getline(guids, guide);
+	int time = 0;
+	int timestep = 1000;    // milis
+	int distance = 0;
+	int time_count = 1;
+	for (auto obj : Mov_Objs) {
+		time = 12100000;
+		obj.moving_time = time;
+		while (i != IdsMaxCount) {
+			index = rand() % m_vertices.size();
+			currentNode = m_vertices[index];
+			// generate count of max vertices to go
+			int roadMaxLength = rand() % 10 + 1;
+			int j_adj = 0;
+			if (m_adjacencyList[index].size() != 0) {
+				while (j_adj != roadMaxLength) {
+					adjIndex = rand() % m_adjacencyList[index].size();
+					distance = obj.speed * timestep * time_count;
+					std::cout << "distance: " << distance << std::endl;
+					std::cout << "dist: " << dist_eee(m_vertices[index], m_vertices[adjIndex]) * 1000000 << std::endl;
+					while (distance < dist_eee(m_vertices[index], m_vertices[adjIndex]) * 10000000) {
+						// sksec amen varkyan generation anel
+						// generate new point
+						std::cout << "in while" << std::endl;
+						generateNewPossition(obj, distance, index, m_vertices[adjIndex]);
 
-		//GUID guid;
-		//HRESULT hCreateGuid = CoCreateGuid(&guid);
-		//OLECHAR* guidString;
-		//StringFromCLSID(guid, &guidString);
-		// ensure memory is freed
-		//::CoTaskMemFree(guidString);
-		
-		 // generate minibuse number
-		std::string minibusNum = minibuses[rand() % minibuses.size()];
-		// generate count of max vertices to go
-		int roadMaxLength = rand() % 10 + 1;
-		int j_adj = 0;
-		if (m_adjacencyList[index].size() != 0) {
-			while (j_adj != roadMaxLength) {
-				adjIndex = rand() % m_adjacencyList[index].size();
-				pointsOnRoad = generatePoints(m_vertices[index], m_vertices[adjIndex]);
-				for (auto point : pointsOnRoad) {
-					generateJsonObject(guide, minibusNum, point.first, point.second);
+						index = adjIndex;
+						
+						time += timestep;
+						++time_count;
+					}
+					++j_adj;
 				}
-				index = adjIndex;
-				++j_adj;
 			}
-		}
 
-		++i;
+			++i;
+		}
 	}
 }
 
 std::vector<std::pair<long double, long double>> Graph::generatePoints(const Node& startPoint, const Node& endPoint)
 {
 	std::vector<std::pair<long double, long double>> LatLongs;
-	long double Long = 0;  //x
-	long double Lat = 0;   //y
+	long double x1 = startPoint.x;
+	long double x2 = endPoint.x;
+	long double y1 = startPoint.y;
+	long double y2 = endPoint.y;
+	
+	long double Long = 0; //x
+	long double Lat = 0;  //y
+
+	int countOFSteps = 1;
+
 	long double x_distance = abs(endPoint.x - startPoint.x);
-	long double step = x_distance / cutsCount;
 	if (startPoint.x < endPoint.x) {
-		for (int i = 0; i < cutsCount; ++i) {
-			Long = startPoint.x + i * step;
-			// Lat calculation formula Y = y1 + ((y2 - y1)/ (x2 - x1)) * (x - x1);
+		while (true) {
+			Long = ((x2 - x1) * countOFSteps * routeLength) / pow((pow(x2 - x1, 2) + pow(y2 - y1, 2)), 0.5) + x1; //x
+			if (Long > x2) {
+				break;
+			}																		   // Lat calculation formula Y = y1 + ((y2 - y1)/ (x2 - x1)) * (x - x1);
 			Lat = startPoint.y + ((endPoint.y - startPoint.y) / (endPoint.x - startPoint.x)) * (Long - startPoint.x);
 			LatLongs.push_back(std::pair<long double, long double>(Long, Lat));
-		}
+			++countOFSteps;
+		};
 	}
 	else if (startPoint.x > endPoint.x) {
-		for (int i = 0; i < cutsCount; ++i) {
-			Long = startPoint.x - i * step;
+		 while (true) {
+			Long = x2 + ((x1 - x2) * countOFSteps * routeLength) / pow((pow(x2 - x1, 2) + pow(y2 - y1, 2)), 0.5); //x
+			if (Long > x1) {
+				break;
+			}
 			Lat = startPoint.y + ((endPoint.y - startPoint.y) / (endPoint.x - startPoint.x)) * (Long - startPoint.x);
 			LatLongs.push_back(std::pair<long double, long double>(Long, Lat));
-		}
+			++countOFSteps;
+		 }
 	}
 	else {
 		//it means startPoint and endPoint are in the same abscis
 		Long = startPoint.x; // x is const in this case
-		for (int i = 0; i < cutsCount; ++i) {
+		int count = 1;
+		while (true) {
 			if (startPoint.y < endPoint.y) {
-				Lat = startPoint.y + i * step;
+				Lat = startPoint.y + count * routeLength;
 			}
 			else {
-				Lat = endPoint.y + i * step;
+				Lat = endPoint.y + count * routeLength;
+			}
+			++count;
+			if (endPoint.y > startPoint.y) {
+				if (Lat > endPoint.y) {
+					break;
+				}
+			}
+			else {
+				if (Lat > startPoint.y) {
+					break;
+				}
 			}
 			LatLongs.push_back(std::pair<long double, long double>(Long, Lat));
 		}
 	}
 	return LatLongs;
 }
+
+template<class InputIt, class T>
+constexpr InputIt find(InputIt first, InputIt last, std::pair<long double, long double> value)
+{
+	for (; first != last; ++first) {
+		if (*first.x_coord == value.first && *first.y_coord == value.second) {
+			return first;
+		}
+	}
+	return last;
+}
+
+void Graph::generateNewPossition(Moving_obj obj, int distance, int startIndex, Node end)
+{
+	Route route;
+	// find new possition
+	long double Long;
+	long double Lat;
+	Node start = m_vertices[startIndex];
+
+	if (start.x < end.x) {
+		Long = ((end.x - start.x) * distance) / pow((pow(end.x - start.x, 2) + pow(end.y - start.y, 2)), 0.5) + start.x; //x																		   // Lat calculation formula Y = y1 + ((y2 - y1)/ (x2 - x1)) * (x - x1);
+		Lat = start.y + ((end.y - start.y) / (end.x - start.x)) * (Long - start.x);
+	}
+	else if (start.x > end.x) {
+		Long = end.x + ((start.x - end.x) * distance) / pow((pow(end.x - start.x, 2) + pow(end.y - start.y, 2)), 0.5); //x
+		Lat = start.y + ((end.y - start.y) / (end.x - start.x)) * (Long - start.x);
+	}
+	else {
+		//it means startPoint and endPoint are in the same abscis
+		Long = start.x; // x is const in this case
+		if (start.y < end.y) {
+			Lat = start.y + distance;
+		}
+		else {
+			Lat = end.y + distance;
+		}
+	}
+
+	obj.coord_x = Long;
+	obj.coord_y = Lat;
+
+	// find in which route is that point
+
+	for (auto route_ptr : Routes[startIndex]) {
+		if (route_ptr.startPtr.first < Long && Long < route_ptr.endPtr.second) {
+			route = route_ptr;
+		}
+	}
+	
+	// generate json
+	generateJsonObject(obj, route);
+}
+
