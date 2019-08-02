@@ -1,10 +1,14 @@
-#include "Exception.h "
+#include "Exception.h"
 #include "Graph.h"
 
+#include <ctime>
 #include <fstream>
 #include <cstdlib>
 #include <iostream>
-#include <chrono>
+#include <boost/uuid/uuid.hpp>
+#include <boost/uuid/uuid_generators.hpp>
+#include <boost/uuid/uuid_io.hpp>
+
 
 void Generator::generateGraphFromInput(std::string filename, Graph & graph) {
 	std::ifstream inputFile(inputFileName, std::ifstream::in);
@@ -40,13 +44,15 @@ void Generator::generateGraphFromInput(std::string filename, Graph & graph) {
 	inputFile.close();
 }
 
-void Graph::generateJsonObject(std::string guid, std::string miniBusNum, long double Long, long double Lat)
+void Graph::generateJsonObject(std::string beacon_id, std::string transport_id, long double lon, long double lat)
 {
+	boost::uuids::uuid route_segment_id = boost::uuids::random_generator()();
 	outStream << " {" << std::endl;
-	outStream << "  \"GUID\": \"" <<  guid << "\"," << std::endl;
-	outStream << "  \"MiniBus\": \"" << miniBusNum << "\"," << std::endl;
-	outStream << "  \"Long\": " << std::to_string(Long) << "," << std::endl;
-	outStream << "  \"Lat\": " << std::to_string(Lat) << "," << std::endl;
-	outStream << "  \"Time\": " << GetTickCount() << std::endl;
+	outStream << "  \"beacon_id\": \"" <<  beacon_id << "\"," << std::endl;
+	outStream << "  \"route_segment_id\": \"" <<  route_segment_id << "\"," << std::endl;
+	outStream << "  \"transport_id\": \"" << transport_id << "\"," << std::endl;
+	outStream << "  \"lon\": " << std::to_string(lon) << "," << std::endl;
+	outStream << "  \"lat\": " << std::to_string(lat) << "," << std::endl;
+	outStream << "  \"timestamp\": " << std::time(0) << std::endl;
 	outStream << " }," << std::endl;
 }

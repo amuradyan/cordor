@@ -1,6 +1,8 @@
 #ifndef EXCEPTION_H
 #define EXCEPTION_H
 
+#define __STRICT_ANSI__
+
 #include <string>
 
 class ExceptionError {
