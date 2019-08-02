@@ -4,25 +4,21 @@
 #include <fstream>
 #include <list>
 #include <algorithm>
+#include <ctime>
 
 extern std::vector<std::list<Route>> Routes;
 
 Graph::Graph():
-	outStream(outputFileName, std::ofstream::out),
-	guids(guidFileName, std::ifstream::in)
+	outStream(outputFileName, std::ofstream::out)
 {
 	if (!outStream.is_open()) {
 		throw ExceptionError("Can not open output file");
-	}
-	if (!guids.is_open()) {
-		throw ExceptionError("Can not open GUIDs file");
 	}
 }
 
 Graph::~Graph()
 {
 	outStream.close();
-	guids.close();
 }
 
 int Graph::addVertexes(std::vector<std::pair<long double, long double>> verteces)
@@ -111,13 +107,12 @@ void Graph::simulate(std::vector<Moving_obj> Mov_Objs)
 	int adjIndex = 0;
 	std::string guide = "";
 	Node currentNode;
-	int time = 0;
+	long timestamp = std::time(0);
 	int timestep = 1000;    // milis
 	int distance = 0;
 	int time_count = 1;
 	for (auto obj : Mov_Objs) {
-		time = 12100000;
-		obj.moving_time = time;
+		obj.moving_time = timestamp;
 		while (i != IdsMaxCount) {
 			index = rand() % m_vertices.size();
 			currentNode = m_vertices[index];
@@ -138,7 +133,7 @@ void Graph::simulate(std::vector<Moving_obj> Mov_Objs)
 
 						index = adjIndex;
 						
-						time += timestep;
+						timestamp += timestep;
 						++time_count;
 					}
 					++j_adj;

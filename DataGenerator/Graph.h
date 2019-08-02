@@ -39,7 +39,7 @@ struct Moving_obj {
 	long double coord_x;
 	long double coord_y;
 	int speed;
-	long double moving_time;
+	long moving_time;
 	std::string route_id;    // maybe needs to be removed
 	std::string minibusNum;
 };
@@ -97,7 +97,6 @@ private:
 	std::vector<Node> m_vertices;
 	std::vector<std::list<idx>> m_adjacencyList;
 	std::ofstream outStream;
-	std::ifstream guids;
 };
 
 namespace Generator {
