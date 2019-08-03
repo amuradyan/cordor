@@ -12,6 +12,7 @@ typedef unsigned int uint;
 #define IdsMaxCount 50
 #define routeLength 0.0005  // meters
 #define midSpeed    20      // m/s
+#define zoomIn     1000000000
 
 
 #endif

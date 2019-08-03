@@ -53,9 +53,9 @@ void Graph::generateJsonObject( Moving_obj obj, Route route)
 	outStream << "\"beacon_lat\": " << std::to_string(obj.coord_y) << ",";
 	outStream << "\"beacon_lon\": " << std::to_string(obj.coord_x) << ",";
 	outStream << "\"route_segment_id\": \"" <<  route.id << "\",";
-	outStream << "\"timestamp\": " << obj.moving_time << "\",";
+	outStream << "\"timestamp\": " << obj.moving_time << ",";
 	outStream << "\"transport_id\": \"" << obj.minibusNum << "\",";
-	outStream << "\"number_of_vehicles\": 1";
+	outStream << "\"number_of_vehicles\": 1,";
 	outStream << "\"lat_1\": " << std::to_string(route.startPtr.second) << ",";
 	outStream << "\"lon_1\": " << std::to_string(route.startPtr.first) << ",";
 	outStream << "\"lat_2\": " << std::to_string(route.endPtr.second) << ",";

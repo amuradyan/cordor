@@ -99,7 +99,7 @@ void Graph::DFSUtil(int v, bool visited[]) {
 	}*/
 }
 
-long double dist_eee(Node first, Node second) {
+long double dist(Node first, Node second) {
 	return (pow(pow(second.y - first.y, 2) + pow(second.y - first.y, 2) , 0.5));
 }
 
@@ -109,14 +109,21 @@ void Graph::simulate(std::vector<Moving_obj> Mov_Objs)
 	int i = 0;
 	int index = 0;
 	int adjIndex = 0;
-	std::string guide = "";
 	Node currentNode;
 	int time = 0;
 	int timestep = 1000;    // milis
 	int distance = 0;
 	int time_count = 1;
+	long double twoEndPointsDistance = 0;
 	for (auto obj : Mov_Objs) {
-		time = 12100000;
+		std::cout << "in the for" << std::endl;
+		//init
+		i = 0;
+		index = 0;
+		adjIndex = 0;
+		time = 100000;
+		distance = 0;
+		time_count = 1;
 		obj.moving_time = time;
 		while (i != IdsMaxCount) {
 			index = rand() % m_vertices.size();
@@ -126,25 +133,22 @@ void Graph::simulate(std::vector<Moving_obj> Mov_Objs)
 			int j_adj = 0;
 			if (m_adjacencyList[index].size() != 0) {
 				while (j_adj != roadMaxLength) {
+					time_count = 1;
 					adjIndex = rand() % m_adjacencyList[index].size();
-					distance = obj.speed * timestep * time_count;
-					std::cout << "distance: " << distance << std::endl;
-					std::cout << "dist: " << dist_eee(m_vertices[index], m_vertices[adjIndex]) * 1000000 << std::endl;
-					while (distance < dist_eee(m_vertices[index], m_vertices[adjIndex]) * 10000000) {
+					twoEndPointsDistance = dist(m_vertices[index], m_vertices[adjIndex]) * zoomIn;
+					while (distance < twoEndPointsDistance) {
+						obj.moving_time = time;
 						// sksec amen varkyan generation anel
 						// generate new point
-						std::cout << "in while" << std::endl;
 						generateNewPossition(obj, distance, index, m_vertices[adjIndex]);
-
-						index = adjIndex;
-						
 						time += timestep;
 						++time_count;
+						distance = obj.speed * timestep * time_count;
 					}
+					index = adjIndex;
 					++j_adj;
 				}
 			}
-
 			++i;
 		}
 	}
@@ -226,7 +230,8 @@ constexpr InputIt find(InputIt first, InputIt last, std::pair<long double, long 
 }
 
 void Graph::generateNewPossition(Moving_obj obj, int distance, int startIndex, Node end)
-{
+{ 
+	double dist = distance / 1000000;
 	Route route;
 	// find new possition
 	long double Long;
@@ -234,21 +239,21 @@ void Graph::generateNewPossition(Moving_obj obj, int distance, int startIndex, N
 	Node start = m_vertices[startIndex];
 
 	if (start.x < end.x) {
-		Long = ((end.x - start.x) * distance) / pow((pow(end.x - start.x, 2) + pow(end.y - start.y, 2)), 0.5) + start.x; //x																		   // Lat calculation formula Y = y1 + ((y2 - y1)/ (x2 - x1)) * (x - x1);
+		Long = ((end.x - start.x) * dist) / pow((pow(end.x - start.x, 2) + pow(end.y - start.y, 2)), 0.5) + start.x; //x																		   // Lat calculation formula Y = y1 + ((y2 - y1)/ (x2 - x1)) * (x - x1);
 		Lat = start.y + ((end.y - start.y) / (end.x - start.x)) * (Long - start.x);
 	}
 	else if (start.x > end.x) {
-		Long = end.x + ((start.x - end.x) * distance) / pow((pow(end.x - start.x, 2) + pow(end.y - start.y, 2)), 0.5); //x
+		Long = end.x + ((start.x - end.x) * dist) / pow((pow(end.x - start.x, 2) + pow(end.y - start.y, 2)), 0.5); //x
 		Lat = start.y + ((end.y - start.y) / (end.x - start.x)) * (Long - start.x);
 	}
 	else {
 		//it means startPoint and endPoint are in the same abscis
 		Long = start.x; // x is const in this case
 		if (start.y < end.y) {
-			Lat = start.y + distance;
+			Lat = start.y + dist;
 		}
 		else {
-			Lat = end.y + distance;
+			Lat = end.y + dist;
 		}
 	}
 
@@ -258,7 +263,10 @@ void Graph::generateNewPossition(Moving_obj obj, int distance, int startIndex, N
 	// find in which route is that point
 
 	for (auto route_ptr : Routes[startIndex]) {
-		if (route_ptr.startPtr.first < Long && Long < route_ptr.endPtr.second) {
+		if ((route_ptr.startPtr.first < (Long - 1) && (Long - 1) < route_ptr.endPtr.second) || (route_ptr.startPtr.first > (Long - 1) && (Long - 1) > route_ptr.endPtr.second)) {
+			route = route_ptr;
+		}
+		else if ((route_ptr.startPtr.first < (Long - 2) && (Long - 2) < route_ptr.endPtr.second) || (route_ptr.startPtr.first > (Long - 2) && (Long - 2) > route_ptr.endPtr.second)) {
 			route = route_ptr;
 		}
 	}
