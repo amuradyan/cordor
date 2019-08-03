@@ -1,6 +1,5 @@
 #include "Exception.h"
 #include "Graph.h"
-#include "Objects.h"
 
 #include <ctime>
 #include <fstream>
@@ -21,7 +20,7 @@ void Generator::generateGraphFromInput(std::string filename, Graph & graph) {
 	std::string line = "";
 	double long x_coord = 0;
 	double long y_coord = 0;
-	std::string delimitor = ",";
+	std::string delimitor = ", ";
 	int del_index = 0;
 	int prev_index = -1;
 	int index = 0;
@@ -49,6 +48,7 @@ void Generator::generateGraphFromInput(std::string filename, Graph & graph) {
 void Graph::generateJsonObject( Moving_obj obj, Route route)
 {
 	outStream << "{";
+<<<<<<< HEAD
 	outStream << "\"beacon_id\": \"" << obj.id << "\",";
 	outStream << "\"beacon_lat\": " << std::to_string(obj.coord_y) << ",";
 	outStream << "\"beacon_lon\": " << std::to_string(obj.coord_x) << ",";
@@ -59,6 +59,18 @@ void Graph::generateJsonObject( Moving_obj obj, Route route)
 	outStream << "\"lat_1\": " << std::to_string(route.startPtr.second) << ",";
 	outStream << "\"lon_1\": " << std::to_string(route.startPtr.first) << ",";
 	outStream << "\"lat_2\": " << std::to_string(route.endPtr.second) << ",";
+=======
+	outStream << "\"beacon_id\": \"" << obj.id << "\", ";
+	outStream << "\"beacon_lat\": " << std::to_string(obj.coord_y) << ", ";
+	outStream << "\"beacon_lon\": " << std::to_string(obj.coord_x) << ", ";
+	outStream << "\"route_segment_id\": \"" <<  route.id << "\", ";
+	outStream << "\"timestamp\": " << obj.moving_time << ", ";
+	outStream << "\"transport_id\": \"" << obj.minibusNum << "\", ";
+	outStream << "\"number_of_vehicles\": 1, ";
+	outStream << "\"lat_1\": " << std::to_string(route.startPtr.second) << ", ";
+	outStream << "\"lon_1\": " << std::to_string(route.startPtr.first) << ", ";
+	outStream << "\"lat_2\": " << std::to_string(route.endPtr.second) << ", ";
+>>>>>>> 8897cf4142696be2d6efb7b59dee57da417d9480
 	outStream << "\"lon_2\": " << std::to_string(route.endPtr.first);
 	outStream << "}" << std::endl;
 }
@@ -92,10 +104,10 @@ std::vector<Moving_obj> Generator::GenerateMovingObjects(int count)
 	for (int i = 0; i < count; ++i) {
 		obj.coord_x = 0;
 		obj.coord_y = 0;
-		obj.moving_time = 0;
+		obj.moving_time = 0L;
 		obj.id = boost::uuids::random_generator()();
 		obj.speed = midSpeed + rand() % 10;
-		// generate minibuse number
+		// generate minibus number
 		obj.minibusNum = minibuses[rand() % minibuses.size()];
 		objs.push_back(obj);
 	}

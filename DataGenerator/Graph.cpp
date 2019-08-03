@@ -4,25 +4,21 @@
 #include <fstream>
 #include <list>
 #include <algorithm>
+#include <ctime>
 
 extern std::vector<std::list<Route>> Routes;
 
 Graph::Graph():
-	outStream(outputFileName, std::ofstream::out),
-	guids(guidFileName, std::ifstream::in)
+	outStream(outputFileName, std::ofstream::out)
 {
 	if (!outStream.is_open()) {
 		throw ExceptionError("Can not open output file");
-	}
-	if (!guids.is_open()) {
-		throw ExceptionError("Can not open GUIDs file");
 	}
 }
 
 Graph::~Graph()
 {
 	outStream.close();
-	guids.close();
 }
 
 int Graph::addVertexes(std::vector<std::pair<long double, long double>> verteces)
@@ -110,12 +106,13 @@ void Graph::simulate(std::vector<Moving_obj> Mov_Objs)
 	int index = 0;
 	int adjIndex = 0;
 	Node currentNode;
-	int time = 0;
+	long timestamp = std::time(0);
 	int timestep = 1000;    // milis
 	int distance = 0;
 	int time_count = 1;
 	long double twoEndPointsDistance = 0;
 	for (auto obj : Mov_Objs) {
+<<<<<<< HEAD
 		std::cout << "in the for" << std::endl;
 		//init
 		i = 0;
@@ -125,6 +122,9 @@ void Graph::simulate(std::vector<Moving_obj> Mov_Objs)
 		distance = 0;
 		time_count = 1;
 		obj.moving_time = time;
+=======
+		obj.moving_time = timestamp;
+>>>>>>> 8897cf4142696be2d6efb7b59dee57da417d9480
 		while (i != IdsMaxCount) {
 			index = rand() % m_vertices.size();
 			currentNode = m_vertices[index];
@@ -141,7 +141,14 @@ void Graph::simulate(std::vector<Moving_obj> Mov_Objs)
 						// sksec amen varkyan generation anel
 						// generate new point
 						generateNewPossition(obj, distance, index, m_vertices[adjIndex]);
+<<<<<<< HEAD
 						time += timestep;
+=======
+
+						index = adjIndex;
+						
+						timestamp += timestep;
+>>>>>>> 8897cf4142696be2d6efb7b59dee57da417d9480
 						++time_count;
 						distance = obj.speed * timestep * time_count;
 					}
